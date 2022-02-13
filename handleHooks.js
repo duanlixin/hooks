@@ -11,26 +11,11 @@ http.createServer(function (req, res) {
     })
 }).listen(9000)
 
-const handleError = (err) => {
-    fs.writeFile('./error.log', `${new Date()}： git 日志写入失败 ${err}`, { flag: 'a+' }); 
-};
-
 handler.on('Push Hook', function (event) {
     try {
-        fs.writeFile(
-            './git.log', 
-            `${event.payload.head_commit.author.name}  
-            ${event.payload.head_commit.timestamp}  
-            ${event.payload.head_commit.message}`, 
-            { flag: 'a+' }, 
-            err => {
-                handleError(err); 
-            }
-        );
+        fs.writeFile('./git.log', `${event.payload.head_commit.author.name}  ${event.payload.head_commit.timestamp}  ${event.payload.head_commit.message}`, { flag: 'a+' }, err => {});
         // 执行hooks脚本
         spawn('sh', ['./build.sh'], {})
     }
-    catch (err) {
-        handleError(err); 
-    }
+    catch (e) {}
 });
